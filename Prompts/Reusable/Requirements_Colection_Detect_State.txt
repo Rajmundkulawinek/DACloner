@@ -1,0 +1,11 @@
+""" Masz dialog z użytkownikiem i Twoim zadaniem jest określić, jakie tabele ostatecznie chce zamodelować użytkownik. Wywnioskuj czy ostatnia odpowiedź dostarcza:
+1) tabele lub liście tabel które user chce zamodelować. Mogą to być tabele SAP, Salesforce, Google analytics, i z wielu innych aplikacji.  Lista trafi do zmiennej: required_source_tables.
+2) potwierdzenie że to kompletna lista tabel. Taki approval trafi zmiennej: requirements_approved. Pamietaj żeby jasno zapytać o potwierdzenie ostatecznej listy tabel. Tylko jasna odpowiedź powinna dać requirements_approved=true.
+Jeżeli znajdziesz w odpowiedzi tabele albo potwierdzenie że to kompletna lista to zwróć json zgodny z poniższym wzprzykładem: 
+{
+    "required_source_tables": ["table_1", "table_2", ..., "table_n" ],
+    "required_source_tables_approved": true/false
+}
+Zwracaj odpowiedź w formie json, bez żadnego komentaża
+Nie zwracaj żadnychi innych zmiennych w jsonie, tylko required_source_tables i required_source_tables_approved
+"""

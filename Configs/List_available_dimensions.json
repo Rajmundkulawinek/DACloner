@@ -1,0 +1,66 @@
+[
+  {
+    "dimension_name": "dim_date",
+    "main_source_table": ["sql script"],
+    "business_key_on_source_side": ["CALCULATED"],
+    "other_source_tables": null,
+    "surrogate_key": "dim_date_key",
+    "business_key_on_dimension_side": ["date"]
+  },
+  {
+    "dimension_name": "dim_quarter",
+    "main_source_table": ["sql script"],
+    "business_key_on_source_side": ["CALCULATED"],
+    "other_source_tables": null,
+    "surrogate_key": "dim_quarter_key",
+    "business_key_on_dimension_side": ["quarter"]
+  },
+  {
+    "dimension_name": "dim_month",
+    "main_source_table": ["sql script"],
+    "business_key_on_source_side": ["CALCULATED"],
+    "other_source_tables": null,
+    "surrogate_key": "dim_month_key",
+    "business_key_on_dimension_side": ["month"]
+  },
+  {
+    "dimension_name": "dim_time",
+    "main_source_table": ["sql script"],
+    "business_key_on_source_side": ["CALCULATED"],
+    "other_source_tables": null,
+    "surrogate_key": "dim_time_key",
+    "business_key_on_dimension_side": ["time"]
+  },
+  {
+    "dimension_name": "dim_currency",
+    "main_source_table": ["TCURC"],
+    "business_key_on_source_side": ["WAERS"],
+    "other_source_tables": null,
+    "surrogate_key": "dim_currency_key",
+    "business_key_on_dimension_side": ["Currency_Key"]
+  },
+  {
+    "dimension_name": "dim_company_code",
+    "main_source_table": ["T001"],
+    "business_key_on_source_side": ["BUKRS"],
+    "other_source_tables": ["T001T"],
+    "surrogate_key": "dim_company_code_key",
+    "business_key_on_dimension_side": ["Company_Code"]
+  },
+  {
+    "dimension_name": "dim_company_code_multilanguage",
+    "main_source_table": ["T001T"],
+    "business_key_on_source_side": ["BUKRS", "SPRAS"],
+    "other_source_tables": null,
+    "surrogate_key": "dim_company_code_ml_key",
+    "business_key_on_dimension_side": ["Company_Code", "Language"]
+  },
+  {
+    "dimension_name": "dim_accounting_document_type",
+    "main_source_table": ["T003"],
+    "business_key_on_source_side": ["BLART"],
+    "other_source_tables": null,
+    "surrogate_key": "dim_accounting_document_type_key",
+    "business_key_on_dimension_side": ["Accounting_Document_Type"]
+  }
+]
