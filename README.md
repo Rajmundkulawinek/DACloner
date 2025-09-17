@@ -18,5 +18,5 @@ The project uses:
 
 ### 1. Clone the repository
 ```bash
-git clone https://github.com/rajmund.kulawinek/DACloner.git
+git clone https://github.com/rajmundkulawinek/DACloner.git
 cd DACloner
