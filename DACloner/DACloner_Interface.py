@@ -1,3 +1,4 @@
+# python -m streamlit run .\DATACloner_Interface.py -- server.port 8502
 import os
 import json
 import re
@@ -7,6 +8,7 @@ from pathlib import Path
 import pandas as pd
 import sqlparse
 import streamlit as st
+from openai import AuthenticationError
 
 from DACloner import (
     DesignState,
@@ -155,24 +157,34 @@ def run_until_interrupt(user_text_or_none: str | None):
         a) pojawi się `__interrupt__` (wtedy dodajemy bąbelek asystenta i STOP),
         b) albo graf skończy (END) – wtedy dorzucamy finalny stan/info.
     - Zwraca (status, reply_text_or_None)
-        status: "need_input" | "done"
+        status: "need_input" | "done" | "auth_error"
     """
     state = st.session_state.state
 
     if user_text_or_none:
         state.last_user_message = user_text_or_none
 
+    _auth_msg = (
+        "**Błąd uwierzytelniania OpenAI (401).** Klucz w `OPENAI_API_KEY` jest "
+        "nieprawidłowy, wygasły lub odwołany. Zaktualizuj `.env` (np. w katalogu głównym "
+        "repozytorium lub obok tego pliku), zrestartuj Streamlit. "
+        "Nowy klucz: https://platform.openai.com/account/api-keys"
+    )
+
     # Pętla bezpieczeństwa (żeby nie zapętlić UI)
     for _ in range(20):
-        result = runnable.invoke(
-            state,
-            config={
-                "configurable": {
-                    "session_id": st.session_state.session_id,
-                    "thread_id": st.session_state.thread_id,
-                }
-            },
-        )
+        try:
+            result = runnable.invoke(
+                state,
+                config={
+                    "configurable": {
+                        "session_id": st.session_state.session_id,
+                        "thread_id": st.session_state.thread_id,
+                    }
+                },
+            )
+        except AuthenticationError:
+            return "auth_error", _auth_msg
 
         if "__interrupt__" in result:
             interrupt_obj = result["__interrupt__"][0].value
@@ -193,7 +205,10 @@ def run_until_interrupt(user_text_or_none: str | None):
 # AUTO-START: pierwszy krok grafu, żeby dostać pierwszą wiadomość bota
 if not st.session_state.chat:
     status, reply = run_until_interrupt(None)  # brak wiadomości od usera
-    if status == "need_input" and reply:
+    if status == "auth_error" and reply:
+        st.session_state.chat.append({"role": "assistant", "content": reply})
+        st.rerun()
+    elif status == "need_input" and reply:
         st.session_state.chat.append({"role": "assistant", "content": reply})
         st.rerun()  # odśwież UI, żeby bąbelek się pojawił
 
@@ -335,7 +350,12 @@ if prompt:
     # 2) uruchom graf aż poprosi o kolejne dane (Interrupt) lub skończy
     status, reply = run_until_interrupt(prompt)
 
-    if status == "need_input" and reply:
+    if status == "auth_error" and reply:
+        st.session_state.chat.append({"role": "assistant", "content": reply})
+        with st.chat_message("assistant"):
+            st.markdown(reply)
+
+    elif status == "need_input" and reply:
         st.session_state.chat.append({"role": "assistant", "content": reply})
         with st.chat_message("assistant"):
             body, files = _extract_files_and_clean_text(reply)
